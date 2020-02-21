@@ -1,0 +1,5 @@
+spring:
+    application:
+        name: spring-boot-quartz-example
+    profiles:
+        active: prod
