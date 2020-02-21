@@ -34,4 +34,9 @@ public interface CityRepository extends CrudRepository<CityInfo, Integer> {
 	 */
 	public abstract CityInfo findByCityId(int cityId); 
 	
+	public abstract CityInfo saveCity(CityInfo cityInfo); 
+	
+	public abstract void deleteByCityId(int id);
+	
+	public abstract void delete(CityInfo cityInfo);
 }

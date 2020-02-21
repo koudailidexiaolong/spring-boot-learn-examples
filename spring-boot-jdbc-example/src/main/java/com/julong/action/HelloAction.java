@@ -1,62 +1,89 @@
 package com.julong.action;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.julong.service.UserService;
+import com.julong.service.dto.UserDTO;
 
 @Controller
 public class HelloAction {
 
 	private static final Logger logger = LoggerFactory.getLogger(HelloAction.class);
 	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	
-	
-	
 	@RequestMapping("")
 	@ResponseBody
 	public String sayHello(){
-		
 		logger.debug("debug");
 		logger.error("error");
 		logger.info("info");
 		logger.warn("warn");
-		
-		List<Object> list = this.jdbcTemplate.query("select * from temp ",new RowMapper<Object>(){
+		return "hello world!";
+	}
+	
+	@Autowired
+	private UserService userServiceImpl;
 
-			@Override
-			public List<Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
-				// TODO Auto-generated method stub
-				List<Object> dataList = new ArrayList<Object>();
-				while (rs.next()) {
-					Object obj = rs.getObject(1);
-					logger.info("info:{}",obj);
-					dataList.add(obj);
-				}
-				return dataList;
-			}
-		});
+	
+	
+	@RequestMapping("/get")
+	@ResponseBody
+	public UserDTO get(){
 		try {
-			logger.info("info:{}",new ObjectMapper().writeValueAsString(list));
-		} catch (JsonProcessingException e) {
+			UserDTO user = this.userServiceImpl.getUser("admin");
+			return user;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@RequestMapping("/save")
+	@ResponseBody
+	public int save(){
+		try {
+			UserDTO userDTO = new UserDTO();
+			userDTO.setPassword("000000");
+			userDTO.setUserName("test");
+			int  result = this.userServiceImpl.saveUser(userDTO);
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	@RequestMapping("/delete")
+	@ResponseBody
+	public int delete(){
+		try {
+			UserDTO userDTO = new UserDTO();
+			userDTO.setUserName("test");
+			return this.userServiceImpl.deleteUser(userDTO);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return "hello world!";
+		return 0;
+	}
+	
+	
+	@RequestMapping("/update")
+	@ResponseBody
+	public int update(){
+		try {
+			UserDTO userDTO = new UserDTO();
+			userDTO.setUserName("test");
+			userDTO.setPassword("999999");
+			return this.userServiceImpl.updateUser(userDTO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }
